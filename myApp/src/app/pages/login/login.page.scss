@@ -1,0 +1,27 @@
+// src/app/pages/login/login.page.scss
+.login-container {
+  max-width: 400px;
+  margin: 0 auto;
+  padding-top: 50px;
+}
+
+.error-message {
+  background: var(--ion-color-danger-tint);
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+  
+  ion-icon {
+    margin-right: 8px;
+  }
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  
+  ion-spinner {
+    margin-right: 8px;
+  }
+}
