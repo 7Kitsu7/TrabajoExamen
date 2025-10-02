@@ -1,4 +1,4 @@
-// src/app/pages/login/login.page.ts
+// src/app/pages/login/login.page.ts - VERSIÓN SEGURA
 import { Component, inject } from '@angular/core';
 import { IonicModule } from '@ionic/angular';
 import { FormsModule } from '@angular/forms';
@@ -28,32 +28,35 @@ export class LoginPage {
     this.isLoading = true;
     this.errorMessage = '';
     
-    console.log('🔐 Intentando login con API...');
+    // ✅ LOG SEGURO - Sin mostrar contraseña
+    console.log('🔐 Intentando login para:', this.credentials.email);
     
     this.apiService.post('login', this.credentials).subscribe({
       next: (response: any) => {
-        console.log('✅ Login exitoso:', response);
+        // ✅ LOG SEGURO - Sin token completo
+        console.log('✅ Login exitoso - Usuario:', response.usuario?.nombre);
         localStorage.setItem('token', response.access_token);
         localStorage.setItem('user', JSON.stringify(response.usuario));
         this.isLoading = false;
         this.router.navigate(['/clientes']);
       },
       error: (error) => {
-        console.error('❌ Error login:', error);
+        // ✅ LOG SEGURO - Solo información de diagnóstico
+        console.error('❌ Error en login - Status:', error.status);
         this.isLoading = false;
         
         if (error.status === 401) {
           this.errorMessage = 'Credenciales incorrectas';
         } else if (error.status === 0) {
-          this.errorMessage = 'Error de conexión. Verifica que el backend esté ejecutándose en http://localhost:8000';
-        } else if (error.status === 422) {
-          this.errorMessage = 'Datos de formulario inválidos';
+          this.errorMessage = 'Error de conexión con el servidor';
         } else {
-          this.errorMessage = `Error: ${error.status} - ${error.message}`;
+          this.errorMessage = 'Error del servidor';
         }
-        
-        console.log('Detalles del error:', error);
       }
     });
+  }
+
+  goToRegister() {
+    this.router.navigate(['/register']);
   }
 }

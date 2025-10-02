@@ -1,13 +1,127 @@
-<ion-header [translucent]="true">
+<!-- src/app/pages/register/register.page.html -->
+<ion-header>
   <ion-toolbar>
-    <ion-title>register</ion-title>
+    <ion-title>Registro</ion-title>
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true">
-  <ion-header collapse="condense">
-    <ion-toolbar>
-      <ion-title size="large">register</ion-title>
-    </ion-toolbar>
-  </ion-header>
+<ion-content class="ion-padding">
+  <div class="register-container">
+    <h2>Crear Cuenta</h2>
+    
+    <!-- Error general -->
+    @if (errorMessage) {
+      <div class="error-message">
+        <ion-text color="danger">
+          {{ errorMessage }}
+        </ion-text>
+      </div>
+    }
+
+    <!-- Mensaje de éxito -->
+    @if (successMessage) {
+      <div class="success-message">
+        <ion-text color="success">
+          {{ successMessage }}
+        </ion-text>
+      </div>
+    }
+    
+    <form (ngSubmit)="register()" #registerForm="ngForm">
+      <!-- Campo Nombre -->
+      <ion-item [class.error]="fieldErrors['nombre']">
+        <ion-label position="stacked">Nombre Completo</ion-label>
+        <ion-input 
+          type="text" 
+          name="nombre" 
+          [(ngModel)]="usuario.nombre"
+          (ionInput)="clearFieldError('nombre')"
+          required
+          placeholder="Ingresa tu nombre">
+        </ion-input>
+      </ion-item>
+      @if (fieldErrors['nombre']) {
+        <div class="field-error">
+          <ion-text color="danger">
+            {{ fieldErrors['nombre'][0] }}
+          </ion-text>
+        </div>
+      }
+
+      <!-- Campo Email -->
+      <ion-item [class.error]="fieldErrors['email']">
+        <ion-label position="stacked">Email</ion-label>
+        <ion-input 
+          type="email" 
+          name="email" 
+          [(ngModel)]="usuario.email"
+          (ionInput)="clearFieldError('email')"
+          required
+          placeholder="ejemplo@correo.com">
+        </ion-input>
+      </ion-item>
+      @if (fieldErrors['email']) {
+        <div class="field-error">
+          <ion-text color="danger">
+            {{ fieldErrors['email'][0] }}
+          </ion-text>
+        </div>
+      }
+
+      <!-- Campo Contraseña -->
+      <ion-item [class.error]="fieldErrors['password']">
+        <ion-label position="stacked">Contraseña</ion-label>
+        <ion-input 
+          type="password" 
+          name="password" 
+          [(ngModel)]="usuario.password"
+          (ionInput)="clearFieldError('password')"
+          required
+          minlength="6"
+          placeholder="Mínimo 8 caracteres">
+        </ion-input>
+      </ion-item>
+      @if (fieldErrors['password']) {
+        <div class="field-error">
+          <ion-text color="danger">
+            {{ fieldErrors['password'][0] }}
+          </ion-text>
+        </div>
+      }
+
+      <!-- Campo Confirmar Contraseña -->
+      <ion-item>
+        <ion-label position="stacked">Confirmar Contraseña</ion-label>
+        <ion-input 
+          type="password" 
+          name="confirmPassword" 
+          [(ngModel)]="usuario.confirmPassword"
+          required
+          placeholder="Repite tu contraseña">
+        </ion-input>
+      </ion-item>
+
+      <ion-button 
+        type="submit" 
+        expand="block" 
+        [disabled]="!registerForm.valid || isLoading"
+        class="ion-margin-top">
+        @if (isLoading) {
+          <ion-spinner></ion-spinner>
+        } @else {
+          Crear Cuenta
+        }
+      </ion-button>
+    </form>
+
+    <div class="login-link ion-text-center ion-margin-top">
+      <p>¿Ya tienes cuenta?</p>
+      <ion-button 
+        expand="block" 
+        fill="clear" 
+        (click)="goToLogin()">
+        Iniciar Sesión
+      </ion-button>
+    </div>
+  </div>
 </ion-content>
