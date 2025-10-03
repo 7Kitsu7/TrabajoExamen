@@ -32,7 +32,7 @@ export class ApiService {
 
   put(endpoint: string, data: any) {
     return this.http.put(`${this.baseUrl}/${endpoint}`, data, { 
-      headers: this.getHeaders() 
+      headers: this.getHeaders()
     });
   }
 
