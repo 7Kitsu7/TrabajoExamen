@@ -19,8 +19,6 @@ export class ApiService {
   }
 
   get(endpoint: string) {
-    return this.http.get(`${this.baseUrl}/${endpoint}`, {
-      headers: this.getHeaders()
     return this.http.get(`${this.baseUrl}/${endpoint}`, { 
       headers: this.getHeaders() 
     });
