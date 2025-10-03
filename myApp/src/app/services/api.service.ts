@@ -18,6 +18,12 @@ export class ApiService {
     });
   }
 
+  get(endpoint: string) {
+    return this.http.get(`${this.baseUrl}/${endpoint}`, {
+      headers: this.getHeaders()
+    });
+  }
+
   post(endpoint: string, data: any) {
     console.log('🌐 Enviando POST a:', `${this.baseUrl}/${endpoint}`);
     return this.http.post(`${this.baseUrl}/${endpoint}`, data, { 
