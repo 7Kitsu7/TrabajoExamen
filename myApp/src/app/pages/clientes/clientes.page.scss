@@ -1,0 +1,52 @@
+// src/app/pages/clientes/clientes.page.scss
+.loading {
+  text-align: center;
+  padding: 40px;
+  
+  ion-spinner {
+    margin-bottom: 16px;
+  }
+}
+
+.error-message {
+  background: var(--ion-color-danger-tint);
+  padding: 16px;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  
+  ion-icon {
+    color: var(--ion-color-medium);
+    margin-bottom: 16px;
+  }
+  
+  h3 {
+    color: var(--ion-color-medium);
+    margin-bottom: 8px;
+  }
+}
+
+.direccion {
+  font-size: 14px;
+  color: var(--ion-color-medium);
+  margin-top: 4px;
+}
+
+.stats {
+  padding: 16px;
+  border-top: 1px solid var(--ion-color-light);
+}
+
+// Estilos para los items deslizables
+ion-item-sliding {
+  margin-bottom: 8px;
+}
+
+ion-item-option {
+  padding: 0 20px;
+}
