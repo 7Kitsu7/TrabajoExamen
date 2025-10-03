@@ -18,7 +18,6 @@ export class ApiService {
     });
   }
 
-  // ✅ AGREGAR ESTOS MÉTODOS
   get(endpoint: string) {
     return this.http.get(`${this.baseUrl}/${endpoint}`, { 
       headers: this.getHeaders() 
