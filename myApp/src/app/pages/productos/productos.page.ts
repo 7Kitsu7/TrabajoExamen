@@ -1,11 +1,12 @@
-import { Component, OnInit, ChangeDetectorRef, NgZone } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, NgZone, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, FormsModule, Validators, ReactiveFormsModule } from '@angular/forms';
-import { IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItemSliding, IonItem, IonLabel, IonNote, IonItemOptions, IonItemOption, IonIcon, IonFab, IonFabButton, IonInfiniteScroll, IonInfiniteScrollContent, IonModal, IonCard, IonCardContent, IonInput, IonButton, IonText, IonTextarea } from '@ionic/angular/standalone';
+import { IonContent, IonHeader, IonTitle, IonToolbar, IonList, IonItem, IonLabel, IonIcon, IonInfiniteScroll, IonInfiniteScrollContent, IonModal, IonInput, IonButton, IonText, IonTextarea, IonButtons, IonAvatar, IonSpinner } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { create, trash, add } from 'ionicons/icons';
+import { create, trashOutline, addOutline, logOutOutline, pricetagOutline, cashOutline, fileTrayStackedOutline, documentTextOutline, pricetagsOutline, cubeOutline, layersOutline, layers } from 'ionicons/icons';
 import { ProductoService, Producto } from '../../services/producto';
 import { AlertController } from '@ionic/angular';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-productos',
@@ -21,24 +22,19 @@ import { AlertController } from '@ionic/angular';
     FormsModule,
     ReactiveFormsModule,
     IonList,
-    IonItemSliding,
     IonItem,
     IonLabel,
-    IonNote,
-    IonItemOptions,
-    IonItemOption,
     IonIcon,
-    IonFab,
-    IonFabButton,
     IonInfiniteScroll,
     IonInfiniteScrollContent,
     IonModal,
-    IonCard,
-    IonCardContent,
     IonInput,
     IonButton,
     IonText,
-    IonTextarea
+    IonTextarea,
+    IonButtons,
+    IonAvatar,
+    IonSpinner
   ]
 })
 export class ProductosPage implements OnInit {
@@ -46,6 +42,9 @@ export class ProductosPage implements OnInit {
   visibleProductos: Producto[] = [];
   pageSize = 10;
   currentIndex = 0;
+  private router = inject(Router);
+  isLoading = true;
+  errorMessage = '';
   showModal = false;
   productForm: FormGroup;
   editingProduct: Producto | null = null;
@@ -84,7 +83,7 @@ export class ProductosPage implements OnInit {
     private cd: ChangeDetectorRef,
     private ngZone: NgZone
   ) {
-    addIcons({ create, trash, add });
+    addIcons({ create, trashOutline, addOutline, logOutOutline, pricetagOutline, cashOutline, fileTrayStackedOutline, documentTextOutline, pricetagsOutline, cubeOutline, layersOutline });
 
     this.productForm = this.fb.group({
       nombre: ['', Validators.required],
@@ -99,12 +98,16 @@ export class ProductosPage implements OnInit {
   }
 
   loadProducts() {
+    this.isLoading = true;
     this.productoService.getProductos().subscribe({
       next: (res) => {
         this.productos = res.reverse();
         this.loadInitial();
+        this.isLoading = false;
       },
       error: (err) => {
+        this.isLoading = false;
+        this.errorMessage = 'Error al cargar los productos';
         console.error('Error cargando productos', err);
       }
     });
@@ -142,11 +145,10 @@ export class ProductosPage implements OnInit {
   }
 
   // Abri modal para editar producto
-  openEditProduct(product: Producto, slidingItem: IonItemSliding) {
+  openEditProduct(product: Producto) {
     this.editingProduct = product;
     this.productForm.patchValue(product);
     this.showModal = true;
-    slidingItem.close();
   }
 
   // Guardar producto (crear o editar)
@@ -175,28 +177,35 @@ export class ProductosPage implements OnInit {
   }
 
   // Eliminar producto
-  async deleteProduct(product: Producto, slidingItem: IonItemSliding) {
-    await slidingItem.close();
+  async deleteProduct(product: Producto) {
     const alert = await this.alertCtrl.create({
-      header: 'Confirmar',
-      subHeader: product.nombre,
-      message: '¿Seguro que deseas eliminar este producto?',
+      header: 'Confirmar Eliminación',
+      message: `¿Está seguro de eliminar "${product.nombre}"?`,
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
-        { text: 'Eliminar', role: 'destructive', handler: () => {
-          this.productoService.deleteProducto(product.id).subscribe({
-            next: () => {
-              this.ngZone.run(() => {
-                this.productos = this.productos.filter(p => p.id !== product.id);
-                if (this.currentIndex > this.productos.length) {
-                  this.currentIndex = this.productos.length;
-                }
-                
-                this.visibleProductos = this.productos.slice(0, this.currentIndex);
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: () => {
+            this.productoService.deleteProducto(product.id).subscribe({
+              next: async () => {
+                this.ngZone.run(() => {
+                  this.productos = this.productos.filter(p => p.id !== product.id);
+                  if (this.currentIndex > this.productos.length) {
+                    this.currentIndex = this.productos.length;
+                  }
+                  this.visibleProductos = this.productos.slice(0, this.currentIndex);
+                  this.cd.detectChanges();
+                });
 
-                this.cd.detectChanges();
-              });
-            },
+                // Mostrar toast solo después de eliminar con éxito
+                const toast = document.createElement('ion-toast');
+                toast.message = `Producto "${product.nombre}" eliminado`;
+                toast.duration = 2000;
+                toast.color = 'success';
+                document.body.appendChild(toast);
+                await toast.present();
+              },
               error: (err) => console.error('Error eliminando producto', err),
             });
           }
@@ -204,5 +213,11 @@ export class ProductosPage implements OnInit {
       ]
     });
     await alert.present();
+  }
+
+  logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    this.router.navigate(['/login']);
   }
 }

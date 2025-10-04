@@ -18,8 +18,8 @@ export class LoginPage {
   private router = inject(Router);
 
   credentials = {
-    email: 'demo@example.com',
-    password: 'password123'
+    email: '',
+    password: ''
   };
   isLoading = false;
   errorMessage = '';
