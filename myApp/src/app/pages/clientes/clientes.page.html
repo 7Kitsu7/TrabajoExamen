@@ -1,13 +1,13 @@
-<!-- src/app/pages/clientes/clientes.page.html -->
+<!-- src/app/pages/clientes/clientes.page.html - CON ÍCONOS -->
 <ion-header>
   <ion-toolbar>
     <ion-title>Clientes</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="crearCliente()">
-        <ion-icon name="add-outline"></ion-icon>
+      <ion-button (click)="abrirModalCliente()" color="primary">
+        <ion-icon name="add-outline" slot="icon-only"></ion-icon>
       </ion-button>
-      <ion-button (click)="logout()">
-        <ion-icon name="log-out-outline"></ion-icon>
+      <ion-button (click)="logout()" color="medium">
+        <ion-icon name="log-out-outline" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -28,9 +28,11 @@
   @if (errorMessage && !isLoading) {
     <div class="error-message">
       <ion-text color="danger">
+        <ion-icon name="warning-outline"></ion-icon>
         {{ errorMessage }}
       </ion-text>
       <ion-button expand="block" (click)="cargarClientes()" class="ion-margin-top">
+        <ion-icon name="refresh-outline" slot="start"></ion-icon>
         Reintentar
       </ion-button>
     </div>
@@ -42,7 +44,8 @@
       <ion-icon name="people-outline" size="large"></ion-icon>
       <h3>No hay clientes</h3>
       <p>Comienza agregando tu primer cliente</p>
-      <ion-button (click)="crearCliente()" class="ion-margin-top">
+      <ion-button (click)="abrirModalCliente()" class="ion-margin-top">
+        <ion-icon name="add-outline" slot="start"></ion-icon>
         Agregar Cliente
       </ion-button>
     </div>
@@ -50,35 +53,45 @@
 
   <!-- Lista de clientes -->
   @if (!isLoading && clientes.length > 0) {
-    <ion-list>
+    <ion-list [inset]="true">
       @for (cliente of clientes; track cliente.id) {
-        <ion-item-sliding>
-          <ion-item>
-            <ion-label>
-              <h3>{{ cliente.nombre }}</h3>
-              <p>{{ cliente.email }}</p>
-              <p>{{ cliente.telefono }}</p>
-              <p class="direccion">{{ cliente.direccion }}</p>
-            </ion-label>
-            <ion-badge slot="end" color="medium">
-              ID: {{ cliente.id }}
-            </ion-badge>
-          </ion-item>
+        <ion-item button (click)="abrirModalCliente(cliente)" detail="true">
+          <ion-avatar slot="start">
+            <ion-icon name="person-circle-outline" size="large"></ion-icon>
+          </ion-avatar>
+          
+          <ion-label>
+            <h3>{{ cliente.nombre }}</h3>
+            <p>
+              <ion-icon name="mail-outline" size="small"></ion-icon>
+              {{ cliente.email }}
+            </p>
+            <p>
+              <ion-icon name="call-outline" size="small"></ion-icon>
+              {{ cliente.telefono || 'Sin teléfono' }}
+            </p>
+            @if (cliente.direccion) {
+              <p class="direccion">
+                <ion-icon name="location-outline" size="small"></ion-icon>
+                {{ cliente.direccion }}
+              </p>
+            }
+          </ion-label>
 
-          <ion-item-options side="end">
-            <ion-item-option color="primary" (click)="editarCliente(cliente)">
-              <ion-icon slot="icon-only" name="create-outline"></ion-icon>
-            </ion-item-option>
-            <ion-item-option color="danger" (click)="eliminarCliente(cliente)">
-              <ion-icon slot="icon-only" name="trash-outline"></ion-icon>
-            </ion-item-option>
-          </ion-item-options>
-        </ion-item-sliding>
+          <ion-button 
+            slot="end" 
+            fill="clear" 
+            color="danger" 
+            (click)="$event.stopPropagation(); eliminarCliente(cliente)">
+            <ion-icon name="trash-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-item>
       }
     </ion-list>
 
     <div class="stats ion-text-center ion-margin-top">
       <ion-text color="medium">
+        <ion-icon name="people-outline" size="small"></ion-icon>
         Total: {{ clientes.length }} cliente(s)
       </ion-text>
     </div>

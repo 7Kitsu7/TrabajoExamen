@@ -1,10 +1,11 @@
-// src/app/pages/clientes/clientes.page.ts - CORREGIR TIPOS
+// src/app/pages/clientes/clientes.page.ts
 import { Component, OnInit, inject } from '@angular/core';
-import { IonicModule } from '@ionic/angular';
+import { IonicModule, ModalController, AlertController } from '@ionic/angular';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ClientesService } from '../../services/clientes.service';
 import { Cliente } from '../../interfaces/cliente.interface';
+import { ClienteModalComponent } from '../../components/cliente-modal/cliente-modal.component';
 
 @Component({
   selector: 'app-clientes',
@@ -15,6 +16,8 @@ import { Cliente } from '../../interfaces/cliente.interface';
 })
 export class ClientesPage implements OnInit {
   private clientesService = inject(ClientesService);
+  private modalCtrl = inject(ModalController);
+  private alertCtrl = inject(AlertController);
   private router = inject(Router);
 
   clientes: Cliente[] = [];
@@ -35,11 +38,11 @@ export class ClientesPage implements OnInit {
         this.isLoading = false;
         console.log('✅ Clientes cargados:', this.clientes.length);
       },
-      error: (error: any) => { // ← AGREGAR TIPO 'any'
+      error: (error: any) => {
         console.error('❌ Error cargando clientes:', error);
         this.isLoading = false;
         this.errorMessage = 'Error al cargar los clientes';
-        
+
         if (error.status === 401) {
           this.router.navigate(['/login']);
         }
@@ -47,26 +50,73 @@ export class ClientesPage implements OnInit {
     });
   }
 
-  crearCliente() {
-    this.router.navigate(['/cliente-editar', 'nuevo']);
+  // ABRIR MODAL PARA CREAR/EDITAR CLIENTE
+  async abrirModalCliente(cliente?: Cliente) {
+    const modal = await this.modalCtrl.create({
+      component: ClienteModalComponent,
+      componentProps: {
+        cliente: cliente || null
+      },
+      breakpoints: [0, 0.8, 1], // Responsive para móvil
+      initialBreakpoint: 0.8 // Ideal para móvil
+    });
+
+    modal.onDidDismiss().then((result) => {
+      if (result.data?.guardado) {
+        this.cargarClientes(); // Recargar lista si se guardó
+      }
+    });
+
+    await modal.present();
   }
 
-  editarCliente(cliente: Cliente) {
-    this.router.navigate(['/cliente-editar', cliente.id]);
-  }
-
+  // ELIMINAR CLIENTE CON ALERTA DE CONFIRMACIÓN
   async eliminarCliente(cliente: Cliente) {
-    if (!confirm(`¿Estás seguro de eliminar a ${cliente.nombre}?`)) {
-      return;
-    }
+    const alert = await this.alertCtrl.create({
+      header: 'Confirmar Eliminación',
+      message: `¿Estás seguro de eliminar a "${cliente.nombre}"?`, // ← Sin <strong>
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+          cssClass: 'secondary'
+        },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          handler: () => {
+            this.confirmarEliminacion(cliente);
+          }
+        }
+      ]
+    });
 
+    await alert.present();
+  }
+
+  private async confirmarEliminacion(cliente: Cliente) {
     try {
       await this.clientesService.deleteCliente(cliente.id!).toPromise();
       console.log('✅ Cliente eliminado');
       this.cargarClientes();
-    } catch (error: any) { // ← AGREGAR TIPO 'any'
+
+      // Mostrar toast de éxito (opcional)
+      const toast = document.createElement('ion-toast');
+      toast.message = `Cliente ${cliente.nombre} eliminado`;
+      toast.duration = 2000;
+      toast.color = 'success';
+      document.body.appendChild(toast);
+      await toast.present();
+
+    } catch (error: any) {
       console.error('❌ Error eliminando cliente:', error);
-      alert('Error al eliminar el cliente');
+
+      const alert = await this.alertCtrl.create({
+        header: 'Error',
+        message: 'No se pudo eliminar el cliente',
+        buttons: ['OK']
+      });
+      await alert.present();
     }
   }
 

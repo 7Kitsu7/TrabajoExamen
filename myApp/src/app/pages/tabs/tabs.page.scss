@@ -1,0 +1,108 @@
+// src/app/pages/tabs/tabs.page.scss
+ion-tabs {
+  ion-tab-bar {
+    --background: #ffffff;
+    --border: 1px solid #f1f5f9;
+    height: 75px;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+    padding: 8px 0;
+    
+    ion-tab-button {
+      --color: #64748b;
+      --color-selected: #0f172a;
+      position: relative;
+      transition: all 0.3s ease;
+      border-radius: 12px;
+      margin: 0 4px;
+      
+      ion-icon {
+        font-size: 1.6rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        margin-bottom: 4px;
+      }
+      
+      ion-label {
+        font-size: 0.75rem;
+        font-weight: 500;
+        margin-top: 2px;
+        transition: all 0.3s ease;
+        letter-spacing: -0.2px;
+      }
+      
+      // Estado activo mejorado
+      &.tab-selected {
+        background: rgba(15, 23, 42, 0.05);
+        
+        ion-icon {
+          color: #0f172a;
+          transform: translateY(-3px) scale(1.1);
+        }
+        
+        ion-label {
+          color: #0f172a;
+          font-weight: 600;
+          transform: translateY(-1px);
+        }
+        
+        // Línea inferior elegante
+        &::after {
+          content: '';
+          position: absolute;
+          bottom: 0;
+          left: 50%;
+          transform: translateX(-50%);
+          width: 28px;
+          height: 3px;
+          background: linear-gradient(90deg, #0f172a, #334155);
+          border-radius: 3px;
+          box-shadow: 0 2px 8px rgba(15, 23, 42, 0.2);
+        }
+      }
+      
+      // Efecto hover mejorado
+      &:hover:not(.tab-selected) {
+        --color: #334155;
+        background: rgba(15, 23, 42, 0.02);
+        
+        ion-icon {
+          transform: scale(1.05);
+        }
+      }
+      
+      // Animación sutil al hacer tap
+      &:active {
+        transform: scale(0.95);
+      }
+    }
+  }
+}
+
+// Efectos globales mejorados
+ion-content {
+  --background: #f8fafc;
+}
+
+// Estado de carga suave
+ion-tab-button {
+  opacity: 0;
+  animation: fadeInUp 0.5s ease forwards;
+  
+  &:nth-child(1) {
+    animation-delay: 0.1s;
+  }
+  
+  &:nth-child(2) {
+    animation-delay: 0.2s;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

@@ -1,0 +1,28 @@
+// src/app/components/cliente-modal/cliente-modal.component.scss
+.error-message {
+  background: var(--ion-color-danger-tint);
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.buttons-container {
+  margin-top: 20px;
+}
+
+// Asegurar que el modal sea responsive
+ion-modal {
+  --height: auto;
+  --border-radius: 16px;
+}
+
+// Mejorar experiencia táctil en móviles
+ion-item {
+  --padding-start: 0;
+  --inner-padding-end: 0;
+}
+
+ion-input, ion-textarea {
+  --padding-start: 0;
+}

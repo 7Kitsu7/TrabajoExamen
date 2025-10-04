@@ -1,4 +1,4 @@
-// src/app/app.routes.ts - VERSIÓN ALTERNATIVA
+// src/app/app.routes.ts
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
@@ -16,19 +16,33 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/register/register.page').then(m => m.RegisterPage)
   },
   {
-    path: 'clientes',
-    loadComponent: () => import('./pages/clientes/clientes.page').then(m => m.ClientesPage)
+    path: 'tabs',
+    loadComponent: () => import('./pages/tabs/tabs.page').then(m => m.TabsPage),
+    children: [
+      {
+        path: 'clientes',
+        loadComponent: () => import('./pages/clientes/clientes.page').then(m => m.ClientesPage)
+      },
+      {
+        path: 'productos',
+        loadComponent: () => import('./pages/productos/productos.page').then(m => m.ProductosPage)
+      },
+      {
+        path: '',
+        redirectTo: '/tabs/clientes',
+        pathMatch: 'full'
+      }
+    ]
   },
+  // Redirección para mantener compatibilidad con tus rutas actuales
   {
-    path: 'cliente-editar/:id',
-    loadComponent: () => import('./pages/cliente-editar/cliente-editar.page').then(m => m.ClienteEditarPage)
+    path: 'clientes',
+    redirectTo: 'tabs/clientes',
+    pathMatch: 'full'
   },
   {
     path: 'productos', 
-    loadComponent: () => import('./pages/productos/productos.page').then(m => m.ProductosPage)
-  },
-  {
-    path: 'cliente-editar',
-    loadComponent: () => import('./pages/cliente-editar/cliente-editar.page').then( m => m.ClienteEditarPage)
-  },
+    redirectTo: 'tabs/productos',
+    pathMatch: 'full'
+  }
 ];

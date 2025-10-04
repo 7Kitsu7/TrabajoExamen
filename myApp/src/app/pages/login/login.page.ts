@@ -38,7 +38,7 @@ export class LoginPage {
         localStorage.setItem('token', response.access_token);
         localStorage.setItem('user', JSON.stringify(response.usuario));
         this.isLoading = false;
-        this.router.navigate(['/clientes']);
+        this.router.navigate(['/tabs/clientes']);
       },
       error: (error) => {
         // ✅ LOG SEGURO - Solo información de diagnóstico

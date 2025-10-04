@@ -14,6 +14,10 @@
   border-radius: 8px;
   text-align: center;
   margin-bottom: 20px;
+  
+  ion-icon {
+    margin-right: 8px;
+  }
 }
 
 .empty-state {
@@ -40,13 +44,18 @@
 .stats {
   padding: 16px;
   border-top: 1px solid var(--ion-color-light);
+  
+  ion-icon {
+    margin-right: 8px;
+  }
 }
 
-// Estilos para los items deslizables
-ion-item-sliding {
-  margin-bottom: 8px;
+// Mejorar experiencia táctil
+ion-item {
+  --min-height: 70px; // Más alto para mejor tacto
 }
 
-ion-item-option {
-  padding: 0 20px;
+ion-button {
+  --padding-top: 12px;
+  --padding-bottom: 12px;
 }

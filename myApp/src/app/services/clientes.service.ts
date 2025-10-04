@@ -11,11 +11,7 @@ export class ClientesService {
 
   getClientes() {
     return this.apiService.get('clientes');
-  }
-
-  getCliente(id: number) {
-    return this.apiService.get(`clientes/${id}`);
-  }
+  } 
 
   createCliente(cliente: Cliente) {
     return this.apiService.post('clientes', cliente);
